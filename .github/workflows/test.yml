@@ -1,0 +1,33 @@
+name: test.yml
+on: push
+jobs:
+  test:
+    name: test
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+      - name: test ubuntu
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          set -x
+          g++ --version
+          g++ locale_errno.cpp -o locale_errno_gcc
+          ./locale_errno_gcc
+          clang++ --version
+          clang++ locale_errno.cpp -o locale_errno_clang
+          ./locale_errno_clang
+      - name: test macos
+        if: matrix.os == 'macos-latest'
+        run: |
+          set -x
+          g++-13 --version
+          g++-13 locale_errno.cpp -o locale_errno_gcc
+          ./locale_errno_gcc
+          clang++ --version
+          clang++ locale_errno.cpp -o locale_errno
+          ./locale_errno
+
